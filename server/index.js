@@ -110,6 +110,41 @@ app.patch("/api/exercises/:id", async (req, res) => {
   }
 });
 
+// Delete a set from an exercise
+app.delete("/api/exercises/:exerciseId/sets/:setId", async (req, res) => {
+  try {
+    const setId = parseInt(req.params.setId);
+    await prisma.set.delete({
+      where: { id: setId },
+    });
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting set:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update a set's reps and weight
+app.put("/api/exercises/:exerciseId/sets/:setId", async (req, res) => {
+  try {
+    const setId = parseInt(req.params.setId);
+    const { reps, weight } = req.body;
+    
+    const updatedSet = await prisma.set.update({
+      where: { id: setId },
+      data: {
+        reps: parseInt(reps),
+        weight: parseFloat(weight),
+      },
+    });
+    
+    res.json(updatedSet);
+  } catch (error) {
+    console.error("Error updating set:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

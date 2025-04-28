@@ -1,9 +1,12 @@
 import { API_BASE } from "../utils/constants";
 
 const Sets = {
-  all: async () => {
-    return await fetch(`${API_BASE}/sets`, {
+  all: async (exerciseId) => {
+    return await fetch(`${API_BASE}/exercises/${exerciseId}`, {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((res) => res.json())
       .then((res) => res?.sets || [])
@@ -12,26 +15,50 @@ const Sets = {
         return [];
       });
   },
-  create: async (set) => {
-    return await fetch(`${API_BASE}/sets`, {
+  create: async (exerciseId, reps, weight) => {
+    return await fetch(`${API_BASE}/exercises/${exerciseId}/sets`, {
       method: "POST",
-      body: JSON.stringify(set),
-    });
-  }, 
-  delete: async (id) => {
-    return await fetch(`${API_BASE}/sets/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reps, weight }),
+    })
+      .then((res) => res.json())
+      .then((res) => res)
+      .catch((e) => {
+        console.error(e);
+        return null;
+      });
+  },
+  delete: async (exerciseId, setId) => {
+    return await fetch(`${API_BASE}/exercises/${exerciseId}/sets/${setId}`, {
       method: "DELETE",
-    });
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => res)
+      .catch((e) => {
+        console.error(e);
+        return null;
+      });
   },
-  update: async (id, set) => {
-    return await fetch(`${API_BASE}/sets/${id}`, {
+  update: async (exerciseId, setId, set) => {
+    return await fetch(`${API_BASE}/exercises/${exerciseId}/sets/${setId}`, {
       method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(set),
-    });
+    })
+      .then((res) => res.json())
+      .then((res) => res)
+      .catch((e) => {
+        console.error(e);
+        return null;
+      });
   },
-
-  
-  
 };
 
 export default Sets;
