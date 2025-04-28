@@ -52,26 +52,35 @@ export default function CurrentWorkout() {
   };
 
   const createSet = async (exerciseId, reps, weight) => {
-    const newSet = await Sets.create(exerciseId, reps, weight);
-    if (newSet) {
-      // Update the selected exercise's sets in state
-      setSelectedExercise(prev => ({
-        ...prev,
-        sets: [...(prev.sets || []), newSet]
-      }));
-      
-      // Update the exercises list to include the new set
-      setExercises(prev => 
-        prev.map(exercise => 
-          exercise.id === exerciseId 
-            ? { ...exercise, sets: [...(exercise.sets || []), newSet] }
-            : exercise
-        )
-      );
-      
-      // Clear the form
-      setReps("");
-      setWeight("");
+    try {
+      // Validate inputs
+      if (!reps || !weight) {
+        return; // Don't proceed if either field is empty
+      }
+
+      const newSet = await Sets.create(exerciseId, parseInt(reps), parseFloat(weight));
+      if (newSet) {
+        // Update the selected exercise's sets in state
+        setSelectedExercise(prev => ({
+          ...prev,
+          sets: [...(prev.sets || []), newSet]
+        }));
+        
+        // Update the exercises list to include the new set
+        setExercises(prev => 
+          prev.map(exercise => 
+            exercise.id === exerciseId 
+              ? { ...exercise, sets: [...(exercise.sets || []), newSet] }
+              : exercise
+          )
+        );
+        
+        // Clear the form inputs
+        setReps("");
+        setWeight("");
+      }
+    } catch (error) {
+      console.error("Error creating set:", error);
     }
   };
 
@@ -261,18 +270,25 @@ export default function CurrentWorkout() {
               <input
                 type="number"
                 placeholder="Reps"
+                value={reps}
                 className="border rounded px-2 py-1 w-20"
                 onChange={(e) => setReps(e.target.value)}
               />
               <input
                 type="number"
                 placeholder="Weight"
+                value={weight}
                 className="border rounded px-2 py-1 w-20"
                 onChange={(e) => setWeight(e.target.value)}
               />
               <button
-                className="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600"
+                className={`px-4 py-1 rounded-md ${
+                  !reps || !weight 
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
                 onClick={() => createSet(selectedExercise.id, reps, weight)}
+                disabled={!reps || !weight}
               >
                 Add Set
               </button>
