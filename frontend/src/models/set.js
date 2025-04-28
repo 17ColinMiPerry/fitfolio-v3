@@ -12,6 +12,26 @@ const Sets = {
         return [];
       });
   },
+  create: async (set) => {
+    return await fetch(`${API_BASE}/sets`, {
+      method: "POST",
+      body: JSON.stringify(set),
+    });
+  }, 
+  delete: async (id) => {
+    return await fetch(`${API_BASE}/sets/${id}`, {
+      method: "DELETE",
+    });
+  },
+  update: async (id, set) => {
+    return await fetch(`${API_BASE}/sets/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(set),
+    });
+  },
+
+  
+  
 };
 
 export default Sets;
