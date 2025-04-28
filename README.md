@@ -1,0 +1,1 @@
+A simple react act using SQLite and prisma to track workouts. User authentication managed by Clerk
