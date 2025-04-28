@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Exercise {
+  id        Int      @id @default(autoincrement())
+  name      String
+  sets      Set[] // One-to-many relationship with Set
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Set {
+  id         Int      @id @default(autoincrement())
+  reps       Int
+  weight     Float // Using Float to allow for decimal weights
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId Int // Foreign key to Exercise
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

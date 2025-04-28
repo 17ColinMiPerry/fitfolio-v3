@@ -1,0 +1,14 @@
+{
+  "name": "fitfolio-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:server": "cd server && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "lint": "cd frontend && npm run lint && cd ../server && npm run lint"
+  },
+  "author": "",
+  "license": "ISC"
+}
