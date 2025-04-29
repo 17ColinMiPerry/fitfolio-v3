@@ -7,7 +7,7 @@ export default function WidgetHeader() {
   useEffect(() => {
     const timer = setInterval(() => {
       setTime(new Date());
-    }, 60000);
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
 
