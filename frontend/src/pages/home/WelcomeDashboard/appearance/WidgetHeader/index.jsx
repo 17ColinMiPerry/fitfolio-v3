@@ -12,9 +12,9 @@ export default function WidgetHeader() {
   }, []);
 
   useEffect(() => {
-    if (time.getHours() < 12) {
+    if (3 <= time.getHours() && time.getHours() < 12) {
       setGreeting("Good Morning");
-    } else if (time.getHours() < 18) {
+    } else if (12 <= time.getHours() && time.getHours() < 18) {
       setGreeting("Good Afternoon");
     } else {
       setGreeting("Good Evening");
