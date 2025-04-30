@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Pencil, Trash, X, Check } from "@phosphor-icons/react";
 import Exercises from "../../../models/exercise";
 import Sets from "../../../models/set";
 
@@ -102,16 +103,30 @@ export default function CurrentWorkout() {
     setEditSetWeight(set.weight);
   };
 
+  const cancelEditingSet = () => {
+    setEditingSetId(null);
+    setEditSetReps("");
+    setEditSetWeight("");
+  };
+
   const updateSet = async (exerciseId, setId, reps, weight) => {
     try {
-      await Sets.update(exerciseId, setId, { reps, weight });
+      // Validate inputs
+      if (!reps || !weight) {
+        return; // Don't proceed if either field is empty
+      }
+
+      await Sets.update(exerciseId, setId, { 
+        reps: parseInt(reps), 
+        weight: parseFloat(weight) 
+      });
       
       // Update the selected exercise's sets in state
       setSelectedExercise(prev => ({
         ...prev,
         sets: prev.sets.map(set => 
           set.id === setId 
-            ? { ...set, reps, weight }
+            ? { ...set, reps: parseInt(reps), weight: parseFloat(weight) }
             : set
         )
       }));
@@ -124,7 +139,7 @@ export default function CurrentWorkout() {
                 ...exercise, 
                 sets: exercise.sets.map(set => 
                   set.id === setId 
-                    ? { ...set, reps, weight }
+                    ? { ...set, reps: parseInt(reps), weight: parseFloat(weight) }
                     : set
                 )
               }
@@ -147,6 +162,11 @@ export default function CurrentWorkout() {
     setSelectedExercise(null);
   };
 
+  const cancelEditingExercise = () => {
+    setEditingExerciseId(null);
+    setEditExerciseName("");
+  };
+
   useEffect(() => {
     const fetchExercises = async () => {
       const exercises = await Exercises.all();
@@ -166,13 +186,13 @@ export default function CurrentWorkout() {
         <table className="min-w-full bg-white">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="w-1/2 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Exercise
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="w-1/4 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Created
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="w-1/4 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -180,7 +200,7 @@ export default function CurrentWorkout() {
           <tbody className="divide-y divide-gray-200">
             {exercises.map((exercise) => (
               <tr key={exercise.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="w-1/2 px-6 py-4 whitespace-nowrap">
                   {editingExerciseId === exercise.id ? (
                     <input
                       type="text"
@@ -190,45 +210,58 @@ export default function CurrentWorkout() {
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           updateExercise(exercise.id, editExerciseName);
+                        } else if (e.key === "Escape") {
+                          cancelEditingExercise();
                         }
                       }}
+                      autoFocus
                     />
                   ) : (
-                    <div 
-                      className="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600"
-                      onClick={() => openExerciseModal(exercise)}
-                    >
-                      {exercise.name}
+                    <div className="flex items-center gap-2 py-[7px]">
+                      <div 
+                        className="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600"
+                        onClick={() => openExerciseModal(exercise)}
+                      >
+                        {exercise.name}
+                      </div>
+                      <button
+                        onClick={() => startEditingExercise(exercise)}
+                        className="text-blue-400 hover:text-blue-600 transition-colors"
+                      >
+                        <Pencil size={20} weight="regular" />
+                      </button>
                     </div>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="w-1/4 px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-500">
                     {new Date(exercise.createdAt).toLocaleDateString()}
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <td className="w-1/4 px-6 py-4 whitespace-nowrap text-sm font-medium">
                   {editingExerciseId === exercise.id ? (
-                    <button
-                      onClick={() => updateExercise(exercise.id, editExerciseName)}
-                      className="text-green-600 hover:text-green-900 mr-2"
-                    >
-                      Save
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => updateExercise(exercise.id, editExerciseName)}
+                        className="text-green-400 hover:text-green-600 transition-colors"
+                      >
+                        <Check size={20} weight="regular" />
+                      </button>
+                      <button
+                        onClick={cancelEditingExercise}
+                        className="text-red-400 hover:text-red-600 transition-colors"
+                      >
+                        <X size={20} weight="regular" />
+                      </button>
+                    </div>
                   ) : (
                     <button
-                      onClick={() => startEditingExercise(exercise)}
-                      className="text-blue-600 hover:text-blue-900 mr-2"
+                      onClick={() => deleteExercise(exercise.id)}
+                      className="text-red-400 hover:text-red-600 transition-colors"
                     >
-                      Edit
+                      <Trash size={20} weight="regular" />
                     </button>
                   )}
-                  <button
-                    onClick={() => deleteExercise(exercise.id)}
-                    className="text-red-600 hover:text-red-900"
-                  >
-                    Delete
-                  </button>
                 </td>
               </tr>
             ))}
@@ -298,16 +331,16 @@ export default function CurrentWorkout() {
             <table className="min-w-full bg-white">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Set</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Reps</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="w-1/6 px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Set</th>
+                  <th className="w-2/6 px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Reps</th>
+                  <th className="w-2/6 px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
+                  <th className="w-1/6 px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {selectedExercise.sets?.map((set, index) => (
                   <tr key={set.id}>
-                    <td className="px-4 py-2">{index + 1}</td>
+                    <td className="px-4 py-[13px]">{index + 1}</td>
                     <td className="px-4 py-2">
                       {editingSetId === set.id ? (
                         <input
@@ -315,6 +348,14 @@ export default function CurrentWorkout() {
                           value={editSetReps}
                           onChange={(e) => setEditSetReps(e.target.value)}
                           className="border rounded px-2 py-1 w-20"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              updateSet(selectedExercise.id, set.id, editSetReps, editSetWeight);
+                            } else if (e.key === "Escape") {
+                              cancelEditingSet();
+                            }
+                          }}
+                          autoFocus
                         />
                       ) : (
                         set.reps
@@ -327,6 +368,13 @@ export default function CurrentWorkout() {
                           value={editSetWeight}
                           onChange={(e) => setEditSetWeight(e.target.value)}
                           className="border rounded px-2 py-1 w-20"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              updateSet(selectedExercise.id, set.id, editSetReps, editSetWeight);
+                            } else if (e.key === "Escape") {
+                              cancelEditingSet();
+                            }
+                          }}
                         />
                       ) : (
                         set.weight
@@ -334,26 +382,36 @@ export default function CurrentWorkout() {
                     </td>
                     <td className="px-4 py-2">
                       {editingSetId === set.id ? (
-                        <button
-                          onClick={() => updateSet(selectedExercise.id, set.id, parseInt(editSetReps), parseFloat(editSetWeight))}
-                          className="text-green-600 hover:text-green-900 mr-2"
-                        >
-                          Save
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => updateSet(selectedExercise.id, set.id, editSetReps, editSetWeight)}
+                            className="text-green-400 hover:text-green-600 transition-colors"
+                          >
+                            <Check size={16} weight="regular" />
+                          </button>
+                          <button
+                            onClick={cancelEditingSet}
+                            className="text-red-400 hover:text-red-600 transition-colors"
+                          >
+                            <X size={16} weight="regular" />
+                          </button>
+                        </div>
                       ) : (
-                        <button
-                          onClick={() => startEditingSet(set)}
-                          className="text-blue-600 hover:text-blue-900 mr-2"
-                        >
-                          Edit
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => startEditingSet(set)}
+                            className="text-blue-400 hover:text-blue-600 transition-colors"
+                          >
+                            <Pencil size={16} weight="regular" />
+                          </button>
+                          <button
+                            onClick={() => deleteSet(selectedExercise.id, set.id)}
+                            className="text-red-400 hover:text-red-600 transition-colors"
+                          >
+                            <Trash size={16} weight="regular" />
+                          </button>
+                        </div>
                       )}
-                      <button
-                        onClick={() => deleteSet(selectedExercise.id, set.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
                     </td>
                   </tr>
                 ))}

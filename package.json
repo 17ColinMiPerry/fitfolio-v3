@@ -10,5 +10,8 @@
     "lint": "cd frontend && npm run lint && cd ../server && npm run lint"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.7"
+  }
 }
