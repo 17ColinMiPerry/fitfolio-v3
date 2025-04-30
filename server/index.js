@@ -16,11 +16,12 @@ app.get("/", (req, res) => {
   });
 });
 
-// Get all exercises
-app.get("/api/exercises", async (req, res) => {
-  console.log("Fetching exercises");
+// Get all exercises for a workout
+app.get("/api/workouts/:workoutId/exercises", async (req, res) => {
   try {
+    const workoutId = parseInt(req.params.workoutId);
     const exercises = await prisma.exercise.findMany({
+      where: { workoutId },
       include: {
         sets: true,
       },
@@ -33,8 +34,9 @@ app.get("/api/exercises", async (req, res) => {
 });
 
 // Create a new exercise
-app.post("/api/exercises", async (req, res) => {
+app.post("/api/workouts/:workoutId/exercises", async (req, res) => {
   try {
+    const workoutId = parseInt(req.params.workoutId);
     const { name } = req.body;
 
     if (!name) {
@@ -43,7 +45,8 @@ app.post("/api/exercises", async (req, res) => {
 
     const exercise = await prisma.exercise.create({
       data: {
-        name: name,
+        name,
+        workoutId,
       },
       include: {
         sets: true,
@@ -80,9 +83,11 @@ app.post("/api/exercises/:id/sets", async (req, res) => {
 app.delete("/api/exercises/:id", async (req, res) => {
   try {
     const exerciseId = parseInt(req.params.id);
+    // First delete all sets associated with this exercise
     await prisma.set.deleteMany({
       where: { exerciseId },
     });
+    // Then delete the exercise
     await prisma.exercise.delete({
       where: { id: exerciseId },
     });
@@ -110,7 +115,7 @@ app.patch("/api/exercises/:id", async (req, res) => {
   }
 });
 
-// Delete a set from an exercise
+// Delete a set
 app.delete("/api/exercises/:exerciseId/sets/:setId", async (req, res) => {
   try {
     const setId = parseInt(req.params.setId);
@@ -124,7 +129,7 @@ app.delete("/api/exercises/:exerciseId/sets/:setId", async (req, res) => {
   }
 });
 
-// Update a set's reps and weight
+// Update a set
 app.put("/api/exercises/:exerciseId/sets/:setId", async (req, res) => {
   try {
     const setId = parseInt(req.params.setId);
@@ -148,4 +153,37 @@ app.put("/api/exercises/:exerciseId/sets/:setId", async (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+});
+
+
+// Workouts
+app.get("/api/workouts", async (req, res) => {
+  const workouts = await prisma.workout.findMany();
+  res.json(workouts);
+});
+
+app.post("/api/workouts", async (req, res) => {
+  const { name } = req.body;
+  const workout = await prisma.workout.create({
+    data: { name },
+  });
+  res.json(workout);
+});
+
+app.delete("/api/workouts/:id", async (req, res) => {
+  const { id } = req.params;
+  await prisma.workout.delete({
+    where: { id: parseInt(id) },
+  });
+  res.json({ success: true });
+});
+
+app.put("/api/workouts/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  await prisma.workout.update({
+    where: { id: parseInt(id) },
+    data: { name },
+  });
+  res.json({ success: true });
 });
