@@ -1,9 +1,12 @@
 import { API_BASE } from "../utils/constants";
 
-const Exercises = {
-  all: async (workoutId) => {
-    return await fetch(`${API_BASE}/workouts/${workoutId}/exercises`, {
+const Workouts = {
+  all: async () => {
+    return await fetch(`${API_BASE}/workouts`, {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((res) => res.json())
       .then((res) => res || [])
@@ -12,8 +15,8 @@ const Exercises = {
         return [];
       });
   },
-  create: async (workoutId, name) => {
-    return await fetch(`${API_BASE}/workouts/${workoutId}/exercises`, {
+  create: async (name) => {
+    return await fetch(`${API_BASE}/workouts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,8 +31,11 @@ const Exercises = {
       });
   },
   delete: async (id) => {
-    return await fetch(`${API_BASE}/exercises/${id}`, {
+    return await fetch(`${API_BASE}/workouts/${id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((res) => res.json())
       .then((res) => res)
@@ -39,8 +45,8 @@ const Exercises = {
       });
   },
   update: async (id, name) => {
-    return await fetch(`${API_BASE}/exercises/${id}`, {
-      method: "PATCH",
+    return await fetch(`${API_BASE}/workouts/${id}`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -55,4 +61,4 @@ const Exercises = {
   },
 };
 
-export default Exercises;
+export default Workouts;

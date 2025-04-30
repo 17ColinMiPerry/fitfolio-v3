@@ -21,7 +21,7 @@ const Sets = {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ reps, weight }),
+      body: JSON.stringify({ reps: parseInt(reps), weight: parseFloat(weight) }),
     })
       .then((res) => res.json())
       .then((res) => res)
@@ -44,13 +44,16 @@ const Sets = {
         return null;
       });
   },
-  update: async (exerciseId, setId, set) => {
+  update: async (exerciseId, setId, { reps, weight }) => {
     return await fetch(`${API_BASE}/exercises/${exerciseId}/sets/${setId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(set),
+      body: JSON.stringify({ 
+        reps: parseInt(reps), 
+        weight: parseFloat(weight) 
+      }),
     })
       .then((res) => res.json())
       .then((res) => res)
