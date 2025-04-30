@@ -2,9 +2,14 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash, X, Check } from "@phosphor-icons/react";
 import Exercises from "../../../models/exercise";
 import Sets from "../../../models/set";
+import Workouts from "../../../models/workout";
 
 export default function CurrentWorkout() {
   const [exercises, setExercises] = useState([]);
+  const [selectedWorkout, setSelectedWorkout] = useState(null);
+  const [showWorkoutModal, setShowWorkoutModal] = useState(false);
+  const [workouts, setWorkouts] = useState([]);
+  const [newWorkoutName, setNewWorkoutName] = useState("");
 
   const [editingExerciseId, setEditingExerciseId] = useState(null);
   const [editExerciseName, setEditExerciseName] = useState("");
@@ -17,9 +22,41 @@ export default function CurrentWorkout() {
   const [reps, setReps] = useState("");
   const [weight, setWeight] = useState("");
 
+  const fetchWorkouts = async () => {
+    const workouts = await Workouts.all();
+    setWorkouts(workouts);
+  };
+
+  const createWorkout = async () => {
+    if (!newWorkoutName.trim()) return;
+    const workout = await Workouts.create(newWorkoutName);
+    setWorkouts([...workouts, workout]);
+    setNewWorkoutName("");
+  };
+
+  const selectWorkout = async (workout) => {
+    setSelectedWorkout(workout);
+    setShowWorkoutModal(false);
+    const exercises = await Exercises.all(workout.id);
+    setExercises(exercises);
+  };
+
+  const deleteWorkout = async (id) => {
+    await Workouts.delete(id);
+    const updatedWorkouts = await Workouts.all();
+    setWorkouts(updatedWorkouts);
+  };
+
+  const updateWorkout = async (id, name) => {
+    await Workouts.update(id, name);
+    const updatedWorkouts = await Workouts.all();
+    setWorkouts(updatedWorkouts);
+  };
+
   const deleteExercise = async (id) => {
+    if (!selectedWorkout) return;
     await Exercises.delete(id);
-    const updatedExercises = await Exercises.all();
+    const updatedExercises = await Exercises.all(selectedWorkout.id);
     setExercises(updatedExercises);
   };
 
@@ -47,8 +84,9 @@ export default function CurrentWorkout() {
   
 
   const createExercise = async (name) => {
-    await Exercises.create(name);
-    const updatedExercises = await Exercises.all();
+    if (!selectedWorkout) return; // Don't proceed if no workout is selected
+    await Exercises.create(selectedWorkout.id, name);
+    const updatedExercises = await Exercises.all(selectedWorkout.id);
     setExercises(updatedExercises);
   };
 
@@ -86,8 +124,9 @@ export default function CurrentWorkout() {
   };
 
   const updateExercise = async (id, name) => {
+    if (!selectedWorkout) return;
     await Exercises.update(id, name);
-    const updatedExercises = await Exercises.all();
+    const updatedExercises = await Exercises.all(selectedWorkout.id);
     setExercises(updatedExercises);
     setEditingExerciseId(null);
   };
@@ -167,19 +206,114 @@ export default function CurrentWorkout() {
     setEditExerciseName("");
   };
 
+  const handleAddSetKeyPress = (e) => {
+    if (e.key === "Enter" && reps && weight) {
+      createSet(selectedExercise.id, reps, weight);
+    }
+  };
+
   useEffect(() => {
-    const fetchExercises = async () => {
-      const exercises = await Exercises.all();
-      setExercises(exercises);
-    };
-    fetchExercises();
+    fetchWorkouts();
   }, []);
+
+  if (!selectedWorkout) {
+    return (
+      <div className="w-[625px] h-[725px] bg-white rounded-lg p-4 flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold mb-4">Welcome to Your Workout</h1>
+        <button
+          onClick={() => setShowWorkoutModal(true)}
+          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Select a Workout
+        </button>
+
+        {/* Workout Selection Modal */}
+        {showWorkoutModal && (
+          <div className="fixed inset-0 bg-gray-900/30 flex items-center justify-center backdrop-blur-sm">
+            <div 
+              className="bg-white rounded-lg p-6 w-[500px] max-h-[80vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Select a Workout</h2>
+                <button
+                  onClick={() => setShowWorkoutModal(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Create New Workout */}
+              <div className="mb-6 flex gap-2">
+                <input
+                  type="text"
+                  value={newWorkoutName}
+                  onChange={(e) => setNewWorkoutName(e.target.value)}
+                  placeholder="New Workout Name"
+                  className="border rounded px-3 py-2 flex-1"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      createWorkout();
+                    }
+                  }}
+                />
+                <button
+                  onClick={createWorkout}
+                  disabled={!newWorkoutName.trim()}
+                  className={`px-4 py-2 rounded-md ${
+                    !newWorkoutName.trim()
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-blue-500 text-white hover:bg-blue-600"
+                  }`}
+                >
+                  Create
+                </button>
+              </div>
+
+              {/* Workout List */}
+              <div className="space-y-2">
+                {workouts.map((workout) => (
+                  <div
+                    key={workout.id}
+                    onClick={() => selectWorkout(workout)}
+                    className="p-3 border rounded-lg cursor-pointer hover:bg-gray-50 flex justify-between items-center"
+                  >
+                    <div>
+                      <div className="font-medium">{workout.name}</div>
+                      <div className="text-sm text-gray-500">
+                        Created {new Date(workout.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div className="text-blue-500">Select →</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="w-[625px] h-[725px] bg-white rounded-lg p-4">
-      <h1 className="text-2xl font-bold mb-2">Current Workout</h1>
-      <div className="text-sm text-gray-600 mb-4">
-        Track your exercises and progress
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <h1 className="text-2xl font-bold">{selectedWorkout.name}</h1>
+          <div className="text-sm text-gray-600">
+            Created {new Date(selectedWorkout.createdAt).toLocaleDateString()}
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            setSelectedWorkout(null);
+            setShowWorkoutModal(true);
+          }}
+          className="text-blue-500 hover:text-blue-600"
+        >
+          Change Workout
+        </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -306,6 +440,7 @@ export default function CurrentWorkout() {
                 value={reps}
                 className="border rounded px-2 py-1 w-20"
                 onChange={(e) => setReps(e.target.value)}
+                onKeyDown={handleAddSetKeyPress}
               />
               <input
                 type="number"
@@ -313,6 +448,7 @@ export default function CurrentWorkout() {
                 value={weight}
                 className="border rounded px-2 py-1 w-20"
                 onChange={(e) => setWeight(e.target.value)}
+                onKeyDown={handleAddSetKeyPress}
               />
               <button
                 className={`px-4 py-1 rounded-md ${
