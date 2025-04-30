@@ -23,8 +23,15 @@ app.get("/api/workouts/:workoutId/exercises", async (req, res) => {
     const exercises = await prisma.exercise.findMany({
       where: { workoutId },
       include: {
-        sets: true,
+        sets: {
+          orderBy: {
+            createdAt: 'asc'
+          }
+        }
       },
+      orderBy: {
+        createdAt: 'asc'
+      }
     });
     res.json(exercises);
   } catch (error) {
@@ -158,7 +165,11 @@ app.listen(PORT, () => {
 
 // Workouts
 app.get("/api/workouts", async (req, res) => {
-  const workouts = await prisma.workout.findMany();
+  const workouts = await prisma.workout.findMany({
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
   res.json(workouts);
 });
 

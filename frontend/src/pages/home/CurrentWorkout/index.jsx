@@ -30,7 +30,7 @@ export default function CurrentWorkout() {
   const createWorkout = async () => {
     if (!newWorkoutName.trim()) return;
     const workout = await Workouts.create(newWorkoutName);
-    setWorkouts([...workouts, workout]);
+    setWorkouts([workout, ...workouts]);
     setNewWorkoutName("");
   };
 
@@ -348,6 +348,7 @@ export default function CurrentWorkout() {
                           cancelEditingExercise();
                         }
                       }}
+                      onBlur={() => updateExercise(exercise.id, editExerciseName)}
                       autoFocus
                     />
                   ) : (
@@ -474,7 +475,9 @@ export default function CurrentWorkout() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {selectedExercise.sets?.map((set, index) => (
+                {selectedExercise.sets?.sort((a, b) => 
+                  new Date(a.createdAt) - new Date(b.createdAt)
+                ).map((set, index) => (
                   <tr key={set.id}>
                     <td className="px-4 py-[13px]">{index + 1}</td>
                     <td className="px-4 py-2">
