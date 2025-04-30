@@ -21,7 +21,10 @@ const Sets = {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ reps: parseInt(reps), weight: parseFloat(weight) }),
+      body: JSON.stringify({
+        reps: parseInt(reps),
+        weight: parseFloat(weight),
+      }),
     })
       .then((res) => res.json())
       .then((res) => res)
@@ -50,9 +53,9 @@ const Sets = {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ 
-        reps: parseInt(reps), 
-        weight: parseFloat(weight) 
+      body: JSON.stringify({
+        reps: parseInt(reps),
+        weight: parseFloat(weight),
       }),
     })
       .then((res) => res.json())
