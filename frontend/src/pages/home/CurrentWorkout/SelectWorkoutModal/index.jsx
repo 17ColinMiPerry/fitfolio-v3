@@ -72,6 +72,7 @@ export default function SelectWorkoutModal({
         {/* Create New Workout */}
         <div className="mb-6 flex gap-2">
           <input
+            disabled={!userId}
             type="text"
             value={newWorkoutName}
             onChange={(e) => setNewWorkoutName(e.target.value)}
