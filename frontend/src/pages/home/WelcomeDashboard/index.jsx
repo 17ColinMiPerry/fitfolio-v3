@@ -6,7 +6,6 @@ export default function WelcomeDashboard() {
     <div className="flex flex-col h-full w-full gap-4 p-8 bg-gray-100 rounded-lg">
       <WidgetHeader />
       <BodyText />
-      
     </div>
   );
 }
