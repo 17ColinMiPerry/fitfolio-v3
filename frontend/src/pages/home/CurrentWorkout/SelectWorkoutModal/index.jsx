@@ -1,37 +1,51 @@
 import Workouts from "../../../../models/workout";
 import Exercises from "../../../../models/exercise";
 import { useState, useEffect } from "react";
+import { useAuth } from "@clerk/clerk-react";
 
 export default function SelectWorkoutModal({
   setShowWorkoutModal,
   setExercises,
   setSelectedWorkout,
 }) {
+  const { userId } = useAuth();
   const [workouts, setWorkouts] = useState([]);
   const [newWorkoutName, setNewWorkoutName] = useState("");
+  const [error, setError] = useState(null);
 
   const fetchWorkouts = async () => {
-    const workouts = await Workouts.all();
-    setWorkouts(workouts);
+    try {
+      const workouts = await Workouts.all(userId);
+      setWorkouts(workouts);
+    } catch (error) {
+      console.error('Error fetching workouts:', error);
+      setError('Failed to fetch workouts');
+    }
   };
 
   const createWorkout = async () => {
     if (!newWorkoutName.trim()) return;
-    const workout = await Workouts.create(newWorkoutName);
-    setWorkouts([workout, ...workouts]);
-    setNewWorkoutName("");
+    try {
+      setError(null);
+      const workout = await Workouts.create(userId, newWorkoutName);
+      setWorkouts([workout, ...workouts]);
+      setNewWorkoutName("");
+    } catch (error) {
+      console.error('Error creating workout:', error);
+      setError(error.message || 'Failed to create workout');
+    }
   };
 
   const selectWorkout = async (workout) => {
     setSelectedWorkout(workout);
     setShowWorkoutModal(false);
-    const exercises = await Exercises.all(workout.id);
+    const exercises = await Exercises.all(userId, workout.id);
     setExercises(exercises);
   };
 
   useEffect(() => {
     fetchWorkouts();
-  }, []);
+  }, [userId]);
 
   return (
     <div className="fixed inset-0 bg-gray-900/30 flex items-center justify-center backdrop-blur-sm">
@@ -48,6 +62,12 @@ export default function SelectWorkoutModal({
             ✕
           </button>
         </div>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
         {/* Create New Workout */}
         <div className="mb-6 flex gap-2">

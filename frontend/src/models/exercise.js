@@ -1,9 +1,13 @@
 import { API_BASE } from "../utils/constants";
 
 const Exercises = {
-  all: async (workoutId) => {
-    return await fetch(`${API_BASE}/workouts/${workoutId}/exercises`, {
+  all: async (userId, workoutId) => {
+    return await fetch(`${API_BASE}/exercises?workoutId=${workoutId}`, {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user-id": userId,
+      },
     })
       .then((res) => res.json())
       .then((res) => res || [])
@@ -12,13 +16,14 @@ const Exercises = {
         return [];
       });
   },
-  create: async (workoutId, name) => {
-    return await fetch(`${API_BASE}/workouts/${workoutId}/exercises`, {
+  create: async (userId, workoutId, name) => {
+    return await fetch(`${API_BASE}/exercises`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-user-id": userId,
       },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ workoutId, name }),
     })
       .then((res) => res.json())
       .then((res) => res)
@@ -27,9 +32,13 @@ const Exercises = {
         return null;
       });
   },
-  delete: async (id) => {
+  delete: async (userId, id) => {
     return await fetch(`${API_BASE}/exercises/${id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user-id": userId,
+      },
     })
       .then((res) => res.json())
       .then((res) => res)
@@ -38,11 +47,12 @@ const Exercises = {
         return null;
       });
   },
-  update: async (id, name) => {
+  update: async (userId, id, name) => {
     return await fetch(`${API_BASE}/exercises/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "x-user-id": userId,
       },
       body: JSON.stringify({ name }),
     })

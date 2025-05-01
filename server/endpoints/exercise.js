@@ -1,11 +1,20 @@
 import { Exercise } from "../models/exercise.js";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export const exerciseEndpoints = (app) => {
   // Get all exercises for a workout
-  app.get("/api/workouts/:workoutId/exercises", async (req, res) => {
+  app.get("/api/exercises", async (req, res) => {
     try {
-      const workoutId = parseInt(req.params.workoutId);
-      const exercises = await Exercise.getAll(workoutId);
+      const userId = req.headers['x-user-id'];
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      const workoutId = req.query.workoutId;
+      if (!workoutId) {
+        return res.status(400).json({ error: "Workout ID is required" });
+      }
+      const exercises = await Exercise.getAll(workoutId, userId);
       res.json(exercises);
     } catch (error) {
       console.error("Error fetching exercises:", error);
@@ -14,11 +23,17 @@ export const exerciseEndpoints = (app) => {
   });
 
   // Create a new exercise
-  app.post("/api/workouts/:workoutId/exercises", async (req, res) => {
+  app.post("/api/exercises", async (req, res) => {
     try {
-      const workoutId = parseInt(req.params.workoutId);
-      const { name } = req.body;
-      const exercise = await Exercise.create(workoutId, name);
+      const userId = req.headers['x-user-id'];
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      const { workoutId, name } = req.body;
+      if (!workoutId || !name) {
+        return res.status(400).json({ error: "Workout ID and name are required" });
+      }
+      const exercise = await Exercise.create(workoutId, userId, name);
       res.json(exercise);
     } catch (error) {
       console.error("Error creating exercise:", error);
@@ -29,8 +44,12 @@ export const exerciseEndpoints = (app) => {
   // Delete an exercise
   app.delete("/api/exercises/:id", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      await Exercise.delete(id);
+      const userId = req.headers['x-user-id'];
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      const { id } = req.params;
+      await Exercise.delete(id, userId);
       res.json({ success: true });
     } catch (error) {
       console.error("Error deleting exercise:", error);
@@ -38,13 +57,17 @@ export const exerciseEndpoints = (app) => {
     }
   });
 
-  // Update exercise name
-  app.patch("/api/exercises/:id", async (req, res) => {
+  // Update an exercise
+  app.put("/api/exercises/:id", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const userId = req.headers['x-user-id'];
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      const { id } = req.params;
       const { name } = req.body;
-      const exercise = await Exercise.update(id, name);
-      res.json(exercise);
+      await Exercise.update(id, userId, name);
+      res.json({ success: true });
     } catch (error) {
       console.error("Error updating exercise:", error);
       res.status(500).json({ error: error.message });

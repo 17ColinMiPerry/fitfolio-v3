@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { Pencil, Trash, X, Check } from "@phosphor-icons/react";
+
+// move this to parent component
+import { useAuth } from "@clerk/clerk-react";
 import Exercises from "../../../models/exercise";
 import AddSetModal from "./AddSetModal";
 import SelectWorkoutModal from "./SelectWorkoutModal";
 
 export default function CurrentWorkout() {
+  // move this to parent component
+  const { userId } = useAuth();
+
   const [exercises, setExercises] = useState([]);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [showWorkoutModal, setShowWorkoutModal] = useState(false);
@@ -15,22 +21,22 @@ export default function CurrentWorkout() {
 
   const deleteExercise = async (id) => {
     if (!selectedWorkout) return;
-    await Exercises.delete(id);
-    const updatedExercises = await Exercises.all(selectedWorkout.id);
+    await Exercises.delete(userId, id);
+    const updatedExercises = await Exercises.all(userId, selectedWorkout.id);
     setExercises(updatedExercises);
   };
 
   const createExercise = async (name) => {
-    if (!selectedWorkout) return; // Don't proceed if no workout is selected
-    await Exercises.create(selectedWorkout.id, name);
-    const updatedExercises = await Exercises.all(selectedWorkout.id);
+    if (!selectedWorkout) return;
+    await Exercises.create(userId, selectedWorkout.id, name);
+    const updatedExercises = await Exercises.all(userId, selectedWorkout.id);
     setExercises(updatedExercises);
   };
 
   const updateExercise = async (id, name) => {
     if (!selectedWorkout) return;
-    await Exercises.update(id, name);
-    const updatedExercises = await Exercises.all(selectedWorkout.id);
+    await Exercises.update(userId, id, name);
+    const updatedExercises = await Exercises.all(userId, selectedWorkout.id);
     setExercises(updatedExercises);
     setEditingExerciseId(null);
   };
