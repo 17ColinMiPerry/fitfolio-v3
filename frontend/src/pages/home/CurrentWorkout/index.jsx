@@ -63,7 +63,7 @@ export default function CurrentWorkout() {
 
   if (!selectedWorkout) {
     return (
-      <div className="w-[625px] h-[725px] bg-white rounded-lg p-4 flex flex-col items-center justify-center">
+      <div className="bg-gray-100 rounded-lg p-4 flex flex-col items-center justify-center h-full w-full">
         <h1 className="text-2xl font-bold mb-4">Welcome to Your Workout</h1>
         <button
           onClick={() => setShowWorkoutModal(true)}
@@ -85,7 +85,7 @@ export default function CurrentWorkout() {
   }
 
   return (
-    <div className="w-[625px] h-[725px] bg-white rounded-lg p-4">
+    <div className="bg-gray-100 rounded-lg p-4 h-full w-full">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-2xl font-bold">{selectedWorkout.name}</h1>
