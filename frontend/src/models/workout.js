@@ -2,11 +2,10 @@ import { API_BASE } from "../utils/constants";
 
 const Workouts = {
   all: async (userId) => {
-    return await fetch(`${API_BASE}/workouts`, {
+    return await fetch(`${API_BASE}/workouts?userId=${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
     })
       .then((res) => res.json())
@@ -22,9 +21,8 @@ const Workouts = {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": userId,
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, userId }),
       });
       
       if (!response.ok) {
@@ -40,11 +38,10 @@ const Workouts = {
     }
   },
   delete: async (userId, id) => {
-    return await fetch(`${API_BASE}/workouts/${id}`, {
+    return await fetch(`${API_BASE}/workouts/${id}?userId=${userId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
     })
       .then((res) => res.json())
@@ -59,9 +56,8 @@ const Workouts = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, userId }),
     })
       .then((res) => res.json())
       .then((res) => res)

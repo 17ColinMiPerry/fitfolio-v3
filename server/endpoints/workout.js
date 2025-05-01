@@ -6,7 +6,7 @@ export const workoutEndpoints = (app) => {
   // Get all workouts for the current user
   app.get("/api/workouts", async (req, res) => {
     try {
-      const userId = req.headers['x-user-id'];
+      const userId = req.query.userId;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }
@@ -21,7 +21,7 @@ export const workoutEndpoints = (app) => {
   // Create a new workout for the current user
   app.post("/api/workouts", async (req, res) => {
     try {
-      const userId = req.headers['x-user-id'];
+      const userId = req.body.userId;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }
@@ -45,7 +45,7 @@ export const workoutEndpoints = (app) => {
   // Delete a workout (only if owned by current user)
   app.delete("/api/workouts/:id", async (req, res) => {
     try {
-      const userId = req.headers['x-user-id'];
+      const userId = req.query.userId;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }
@@ -61,7 +61,7 @@ export const workoutEndpoints = (app) => {
   // Update a workout (only if owned by current user)
   app.put("/api/workouts/:id", async (req, res) => {
     try {
-      const userId = req.headers['x-user-id'];
+      const userId = req.body.userId;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }

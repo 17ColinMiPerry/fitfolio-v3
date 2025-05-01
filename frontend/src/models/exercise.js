@@ -2,11 +2,10 @@ import { API_BASE } from "../utils/constants";
 
 const Exercises = {
   all: async (userId, workoutId) => {
-    return await fetch(`${API_BASE}/exercises?workoutId=${workoutId}`, {
+    return await fetch(`${API_BASE}/exercises?workoutId=${workoutId}&userId=${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
     })
       .then((res) => res.json())
@@ -21,9 +20,8 @@ const Exercises = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
-      body: JSON.stringify({ workoutId, name }),
+      body: JSON.stringify({ workoutId, name, userId }),
     })
       .then((res) => res.json())
       .then((res) => res)
@@ -33,11 +31,10 @@ const Exercises = {
       });
   },
   delete: async (userId, id) => {
-    return await fetch(`${API_BASE}/exercises/${id}`, {
+    return await fetch(`${API_BASE}/exercises/${id}?userId=${userId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
     })
       .then((res) => res.json())
@@ -52,9 +49,8 @@ const Exercises = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "x-user-id": userId,
       },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, userId }),
     })
       .then((res) => res.json())
       .then((res) => res)

@@ -6,7 +6,7 @@ export const exerciseEndpoints = (app) => {
   // Get all exercises for a workout
   app.get("/api/exercises", async (req, res) => {
     try {
-      const userId = req.headers['x-user-id'];
+      const userId = req.query.userId;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }
@@ -25,7 +25,7 @@ export const exerciseEndpoints = (app) => {
   // Create a new exercise
   app.post("/api/exercises", async (req, res) => {
     try {
-      const userId = req.headers['x-user-id'];
+      const userId = req.body.userId;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }
@@ -44,7 +44,7 @@ export const exerciseEndpoints = (app) => {
   // Delete an exercise
   app.delete("/api/exercises/:id", async (req, res) => {
     try {
-      const userId = req.headers['x-user-id'];
+      const userId = req.query.userId;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }
@@ -60,7 +60,7 @@ export const exerciseEndpoints = (app) => {
   // Update an exercise
   app.put("/api/exercises/:id", async (req, res) => {
     try {
-      const userId = req.headers['x-user-id'];
+      const userId = req.body.userId;
       if (!userId) {
         return res.status(401).json({ error: "Unauthorized" });
       }
