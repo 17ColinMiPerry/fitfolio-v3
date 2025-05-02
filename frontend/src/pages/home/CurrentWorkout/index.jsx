@@ -104,7 +104,7 @@ export default function CurrentWorkout() {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[80%] overflow-y-auto">
         <table className="min-w-full bg-white">
           <thead className="bg-gray-50">
             <tr>
@@ -160,7 +160,10 @@ export default function CurrentWorkout() {
                 </td>
                 <td className="w-1/4 px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-500">
-                    {new Date(exercise.createdAt).toLocaleDateString()}
+                    {new Date(exercise.createdAt).toLocaleTimeString([], {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
                   </div>
                 </td>
                 <td className="w-1/4 px-6 py-4 whitespace-nowrap text-sm font-medium">
