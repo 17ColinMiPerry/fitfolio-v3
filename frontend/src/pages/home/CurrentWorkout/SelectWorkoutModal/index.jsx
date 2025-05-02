@@ -119,22 +119,24 @@ export default function SelectWorkoutModal({
           {workouts.map((workout) => (
             <div
               key={workout.id}
-              onClick={() => selectWorkout(workout)}
-              className="p-3 border rounded-lg cursor-pointer hover:bg-gray-50 flex justify-between items-center"
+              className="p-3 border rounded-lg flex items-center gap-4 hover:bg-gray-50 cursor-pointer"
             >
-              <div>
-                <div className="font-medium">{workout.name}</div>
-                <div className="text-sm text-gray-500">
-                  Created {new Date(workout.createdAt).toLocaleDateString()}
+              <button
+                onClick={(e) => deleteWorkout(e, workout)}
+                className="text-red-400 hover:text-red-600 transition-colors"
+              >
+                <Trash size={20} weight="regular" />
+              </button>
+              <div 
+                onClick={() => selectWorkout(workout)}
+                className="flex-1 flex justify-between items-center"
+              >
+                <div>
+                  <div className="font-medium">{workout.name}</div>
+                  <div className="text-sm text-gray-500">
+                    Created {new Date(workout.createdAt).toLocaleDateString()}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={(e) => deleteWorkout(e, workout)}
-                  className="text-red-400 hover:text-red-600 transition-colors"
-                >
-                  <Trash size={20} weight="regular" />
-                </button>
                 <div className="text-blue-500">Select →</div>
               </div>
             </div>
