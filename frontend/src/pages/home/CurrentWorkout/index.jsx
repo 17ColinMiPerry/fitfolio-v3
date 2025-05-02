@@ -131,14 +131,22 @@ export default function CurrentWorkout() {
                       className="border rounded px-2 py-1"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          updateExercise(exercise.id, editExerciseName);
+                          if (editExerciseName.trim()) {
+                            updateExercise(exercise.id, editExerciseName);
+                          } else {
+                            cancelEditingExercise();
+                          }
                         } else if (e.key === "Escape") {
                           cancelEditingExercise();
                         }
                       }}
-                      onBlur={() =>
-                        updateExercise(exercise.id, editExerciseName)
-                      }
+                      onBlur={() => {
+                        if (editExerciseName.trim()) {
+                          updateExercise(exercise.id, editExerciseName);
+                        } else {
+                          cancelEditingExercise();
+                        }
+                      }}
                       autoFocus
                     />
                   ) : (
