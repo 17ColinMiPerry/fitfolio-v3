@@ -48,7 +48,10 @@ export default function SelectWorkoutModal({
   }, [userId]);
 
   return (
-    <div className="fixed inset-0 bg-gray-900/30 flex items-center justify-center backdrop-blur-sm">
+    <div 
+      className="fixed inset-0 bg-gray-900/30 flex items-center justify-center backdrop-blur-sm"
+      onClick={() => setShowWorkoutModal(false)}
+    >
       <div
         className="bg-white rounded-lg p-6 w-[500px] max-h-[80vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
