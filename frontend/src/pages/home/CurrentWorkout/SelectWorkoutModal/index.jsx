@@ -2,6 +2,7 @@ import Workouts from "../../../../models/workout";
 import Exercises from "../../../../models/exercise";
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { Trash } from "@phosphor-icons/react";
 
 export default function SelectWorkoutModal({
   setShowWorkoutModal,
@@ -36,6 +37,17 @@ export default function SelectWorkoutModal({
     }
   };
 
+  const deleteWorkout = async (e, workout) => {
+    e.stopPropagation(); // Prevent workout selection when deleting
+    try {
+      await Workouts.delete(userId, workout.id);
+      setWorkouts(workouts.filter((w) => w.id !== workout.id));
+    } catch (error) {
+      console.error('Error deleting workout:', error);
+      setError(error.message || 'Failed to delete workout');
+    }
+  };
+
   const selectWorkout = async (workout) => {
     setSelectedWorkout(workout);
     setShowWorkoutModal(false);
@@ -59,7 +71,9 @@ export default function SelectWorkoutModal({
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Select a Workout</h2>
           <button
-            onClick={() => setShowWorkoutModal(false)}
+            onClick={() => {
+              setShowWorkoutModal(false);
+            }}
             className="text-gray-500 hover:text-gray-700"
           >
             ✕
@@ -114,7 +128,15 @@ export default function SelectWorkoutModal({
                   Created {new Date(workout.createdAt).toLocaleDateString()}
                 </div>
               </div>
-              <div className="text-blue-500">Select →</div>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={(e) => deleteWorkout(e, workout)}
+                  className="text-red-400 hover:text-red-600 transition-colors"
+                >
+                  <Trash size={20} weight="regular" />
+                </button>
+                <div className="text-blue-500">Select →</div>
+              </div>
             </div>
           ))}
         </div>
