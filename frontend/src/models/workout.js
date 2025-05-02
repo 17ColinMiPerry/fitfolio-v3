@@ -24,16 +24,16 @@ const Workouts = {
         },
         body: JSON.stringify({ name, userId }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Error creating workout:', errorData);
-        throw new Error(errorData.error || 'Failed to create workout');
+        console.error("Error creating workout:", errorData);
+        throw new Error(errorData.error || "Failed to create workout");
       }
-      
+
       return await response.json();
     } catch (error) {
-      console.error('Error in workout creation:', error);
+      console.error("Error in workout creation:", error);
       throw error; // Re-throw to handle in the component
     }
   },

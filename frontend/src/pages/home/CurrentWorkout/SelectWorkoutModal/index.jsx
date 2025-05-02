@@ -19,8 +19,8 @@ export default function SelectWorkoutModal({
       const workouts = await Workouts.all(userId);
       setWorkouts(workouts);
     } catch (error) {
-      console.error('Error fetching workouts:', error);
-      setError('Failed to fetch workouts');
+      console.error("Error fetching workouts:", error);
+      setError("Failed to fetch workouts");
     }
   };
 
@@ -32,8 +32,8 @@ export default function SelectWorkoutModal({
       setWorkouts([workout, ...workouts]);
       setNewWorkoutName("");
     } catch (error) {
-      console.error('Error creating workout:', error);
-      setError(error.message || 'Failed to create workout');
+      console.error("Error creating workout:", error);
+      setError(error.message || "Failed to create workout");
     }
   };
 
@@ -43,8 +43,8 @@ export default function SelectWorkoutModal({
       await Workouts.delete(userId, workout.id);
       setWorkouts(workouts.filter((w) => w.id !== workout.id));
     } catch (error) {
-      console.error('Error deleting workout:', error);
-      setError(error.message || 'Failed to delete workout');
+      console.error("Error deleting workout:", error);
+      setError(error.message || "Failed to delete workout");
     }
   };
 
@@ -60,7 +60,7 @@ export default function SelectWorkoutModal({
   }, [userId]);
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-gray-900/30 flex items-center justify-center backdrop-blur-sm"
       onClick={() => setShowWorkoutModal(false)}
     >
@@ -127,7 +127,7 @@ export default function SelectWorkoutModal({
               >
                 <Trash size={20} weight="regular" />
               </button>
-              <div 
+              <div
                 onClick={() => selectWorkout(workout)}
                 className="flex-1 flex justify-between items-center"
               >

@@ -31,7 +31,9 @@ export const exerciseEndpoints = (app) => {
       }
       const { workoutId, name } = req.body;
       if (!workoutId || !name) {
-        return res.status(400).json({ error: "Workout ID and name are required" });
+        return res
+          .status(400)
+          .json({ error: "Workout ID and name are required" });
       }
       const exercise = await Exercise.create(workoutId, userId, name);
       res.json(exercise);
@@ -73,4 +75,4 @@ export const exerciseEndpoints = (app) => {
       res.status(500).json({ error: error.message });
     }
   });
-}; 
+};

@@ -2,12 +2,15 @@ import { API_BASE } from "../utils/constants";
 
 const Exercises = {
   all: async (userId, workoutId) => {
-    return await fetch(`${API_BASE}/exercises?workoutId=${workoutId}&userId=${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    return await fetch(
+      `${API_BASE}/exercises?workoutId=${workoutId}&userId=${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    })
+    )
       .then((res) => res.json())
       .then((res) => res || [])
       .catch((e) => {

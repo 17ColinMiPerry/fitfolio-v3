@@ -38,4 +38,4 @@ export const setEndpoints = (app) => {
       res.status(500).json({ error: error.message });
     }
   });
-}; 
+};

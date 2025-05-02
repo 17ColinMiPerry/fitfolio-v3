@@ -5,10 +5,10 @@ export class Exercise {
   static async getAll(workoutId, userId) {
     // First verify the workout belongs to the user
     const workout = await prisma.workout.findFirst({
-      where: { 
+      where: {
         id: parseInt(workoutId),
-        userId 
-      }
+        userId,
+      },
     });
 
     if (!workout) {
@@ -33,10 +33,10 @@ export class Exercise {
   static async create(workoutId, userId, name) {
     // First verify the workout belongs to the user
     const workout = await prisma.workout.findFirst({
-      where: { 
+      where: {
         id: parseInt(workoutId),
-        userId 
-      }
+        userId,
+      },
     });
 
     if (!workout) {
@@ -44,7 +44,7 @@ export class Exercise {
     }
 
     return await prisma.exercise.create({
-      data: { 
+      data: {
         name,
         workoutId: parseInt(workoutId),
       },
@@ -55,7 +55,7 @@ export class Exercise {
     // First verify the exercise belongs to a workout owned by the user
     const exercise = await prisma.exercise.findFirst({
       where: { id: parseInt(id) },
-      include: { workout: true }
+      include: { workout: true },
     });
 
     if (!exercise || exercise.workout.userId !== userId) {
@@ -64,12 +64,12 @@ export class Exercise {
 
     // First delete all associated sets
     await prisma.set.deleteMany({
-      where: { exerciseId: parseInt(id) }
+      where: { exerciseId: parseInt(id) },
     });
 
     // Then delete the exercise
     return await prisma.exercise.delete({
-      where: { id: parseInt(id) }
+      where: { id: parseInt(id) },
     });
   }
 
@@ -77,7 +77,7 @@ export class Exercise {
     // First verify the exercise belongs to a workout owned by the user
     const exercise = await prisma.exercise.findFirst({
       where: { id: parseInt(id) },
-      include: { workout: true }
+      include: { workout: true },
     });
 
     if (!exercise || exercise.workout.userId !== userId) {
@@ -90,4 +90,3 @@ export class Exercise {
     });
   }
 }
-
