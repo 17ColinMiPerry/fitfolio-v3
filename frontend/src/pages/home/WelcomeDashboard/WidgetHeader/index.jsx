@@ -23,7 +23,7 @@ export default function WidgetHeader() {
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row justify-between items-start">
         <h1 className="text-3xl font-semibold">{greeting}</h1>
         <div className="flex flex-col items-end">
           <p className="">

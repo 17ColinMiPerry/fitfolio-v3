@@ -35,7 +35,7 @@ function StatTracker({ workouts }) {
     <div className="flex flex-col h-full w-full gap-4 p-8 bg-gray-100 rounded-lg">
       <h1 className="text-3xl font-semibold mb-4">Your Stats</h1>
       
-      <div className="flex gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Days Since Creation */}
         <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
           <h2 className="text-xl font-semibold mb-2">Account Age</h2>
@@ -54,6 +54,15 @@ function StatTracker({ workouts }) {
             <p className="text-xl text-gray-600">workouts</p>
           </div>
           <p className="text-gray-600 text-sm mt-1">Every workout counts! 💪</p>
+        </div>
+
+        {/* More Stats Coming Soon */}
+        <div className="bg-white p-6 rounded-lg shadow-sm flex-1 flex flex-col items-center justify-center">
+          <h2 className="text-xl font-semibold mb-2">More Stats</h2>
+          <div className="flex items-baseline gap-2">
+            <p className="text-2xl font-bold text-gray-400">Coming soon!</p>
+          </div>
+          <p className="text-gray-600 text-sm mt-1">Stay tuned for more features 🚀</p>
         </div>
       </div>
     </div>
