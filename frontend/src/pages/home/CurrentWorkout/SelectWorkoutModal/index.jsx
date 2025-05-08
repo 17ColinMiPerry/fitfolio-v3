@@ -1,28 +1,19 @@
 import Workouts from "../../../../models/workout";
 import Exercises from "../../../../models/exercise";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { Trash } from "@phosphor-icons/react";
 
 export default function SelectWorkoutModal({
+  workouts,
+  setWorkouts,
   setShowWorkoutModal,
   setExercises,
   setSelectedWorkout,
 }) {
   const { userId } = useAuth();
-  const [workouts, setWorkouts] = useState([]);
   const [newWorkoutName, setNewWorkoutName] = useState("");
   const [error, setError] = useState(null);
-
-  const fetchWorkouts = async () => {
-    try {
-      const workouts = await Workouts.all(userId);
-      setWorkouts(workouts);
-    } catch (error) {
-      console.error("Error fetching workouts:", error);
-      setError("Failed to fetch workouts");
-    }
-  };
 
   const createWorkout = async () => {
     if (!newWorkoutName.trim()) return;
@@ -41,7 +32,12 @@ export default function SelectWorkoutModal({
     e.stopPropagation(); // Prevent workout selection when deleting
     try {
       await Workouts.delete(userId, workout.id);
-      setWorkouts(workouts.filter((w) => w.id !== workout.id));
+      // Create a new array to force React to recognize the change
+      const updatedWorkouts = [...workouts].filter((w) => w.id !== workout.id);
+      setWorkouts(updatedWorkouts);
+      // Clear selected workout if it was the one being deleted
+      setSelectedWorkout(null);
+      setExercises([]);
     } catch (error) {
       console.error("Error deleting workout:", error);
       setError(error.message || "Failed to delete workout");
@@ -55,9 +51,6 @@ export default function SelectWorkoutModal({
     setExercises(exercises);
   };
 
-  useEffect(() => {
-    fetchWorkouts();
-  }, [userId]);
 
   return (
     <div

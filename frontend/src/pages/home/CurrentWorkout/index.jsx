@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { Pencil, Trash, X, Check } from "@phosphor-icons/react";
 
-// move this to parent component
 import { useAuth } from "@clerk/clerk-react";
 import Exercises from "../../../models/exercise";
 import AddSetModal from "./AddSetModal";
 import SelectWorkoutModal from "./SelectWorkoutModal";
 
-export default function CurrentWorkout() {
-  // move this to parent component
+export default function CurrentWorkout({ workouts, setWorkouts }) {
   const { userId } = useAuth();
 
   const [exercises, setExercises] = useState([]);
@@ -75,6 +73,8 @@ export default function CurrentWorkout() {
         {/* Workout Selection Modal */}
         {showWorkoutModal && (
           <SelectWorkoutModal
+            workouts={workouts}
+            setWorkouts={setWorkouts}
             setShowWorkoutModal={setShowWorkoutModal}
             setExercises={setExercises}
             setSelectedWorkout={setSelectedWorkout}

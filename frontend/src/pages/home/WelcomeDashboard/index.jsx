@@ -1,9 +1,8 @@
 import WidgetHeader from "./WidgetHeader";
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import Workouts from "../../../models/workout";
 
-export default function WelcomeDashboard() {
+export default function WelcomeDashboard({ workouts }) {
   const { userId } = useAuth();
   const [streak, setStreak] = useState(0);
   
@@ -11,14 +10,15 @@ export default function WelcomeDashboard() {
     const getStreak = async () => {
       if (!userId) return;
       try {
-        const workouts = await Workouts.all(userId);
-        
         // Get unique workout dates
         const dates = [...new Set(
           workouts.map(w => new Date(w.createdAt).toISOString().split('T')[0])
         )].sort();
         
-        if (dates.length === 0) return;
+        if (dates.length === 0) {
+          setStreak(0);
+          return;
+        }
 
         let currentStreak = 0;
         const today = new Date().toISOString().split('T')[0];
@@ -33,7 +33,10 @@ export default function WelcomeDashboard() {
         // Start checking from yesterday
         let checkDate = yesterday;
         
-        for (const date of dates.reverse()) {
+        // Sort dates in reverse order to check most recent first
+        const sortedDates = [...dates].reverse();
+        
+        for (const date of sortedDates) {
           if (date === checkDate) {
             currentStreak++;
             // Move to previous day
@@ -51,7 +54,7 @@ export default function WelcomeDashboard() {
     };
 
     getStreak();
-  }, [userId]);
+  }, [userId, workouts]);
 
   return (
     <div className="flex flex-col h-full w-full gap-4 p-8 bg-gray-100 rounded-lg">

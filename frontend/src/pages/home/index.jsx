@@ -2,18 +2,32 @@ import Header from "../../components/Header";
 import CurrentWorkout from "./CurrentWorkout";
 import WelcomeDashboard from "./WelcomeDashboard";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
+import Workouts from "../../models/workout";
+import { useAuth } from "@clerk/clerk-react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const { userId } = useAuth();
+  const [workouts, setWorkouts] = useState([]);
+  
+  useEffect(() => {
+    const getWorkouts = async () => {
+      const workouts = await Workouts.all(userId);
+      setWorkouts(workouts);
+    };
+    getWorkouts();
+  }, [userId]);
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-300">
       <SignedIn>
         <Header />
         <div className="flex flex-row items-center justify-center bg-gray-300 gap-12">
           <div className="w-[625px] h-[725px] rounded-lg">
-            <WelcomeDashboard />
+            <WelcomeDashboard workouts={workouts} setWorkouts={setWorkouts} />
           </div>
           <div className="w-[625px] h-[725px] rounded-lg">
-            <CurrentWorkout />
+            <CurrentWorkout workouts={workouts} setWorkouts={setWorkouts} />
           </div>
         </div>
       </SignedIn>
