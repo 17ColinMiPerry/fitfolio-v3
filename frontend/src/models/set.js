@@ -15,7 +15,7 @@ const Sets = {
         return [];
       });
   },
-  create: async (exerciseId, reps, weight) => {
+  create: async (exerciseId, reps, weight, notes = null) => {
     return await fetch(`${API_BASE}/exercises/${exerciseId}/sets`, {
       method: "POST",
       headers: {
@@ -24,6 +24,7 @@ const Sets = {
       body: JSON.stringify({
         reps: parseInt(reps),
         weight: parseFloat(weight),
+        notes,
       }),
     })
       .then((res) => res.json())
@@ -47,7 +48,7 @@ const Sets = {
         return null;
       });
   },
-  update: async (exerciseId, setId, { reps, weight }) => {
+  update: async (exerciseId, setId, { reps, weight, notes }) => {
     return await fetch(`${API_BASE}/exercises/${exerciseId}/sets/${setId}`, {
       method: "PUT",
       headers: {
@@ -56,6 +57,7 @@ const Sets = {
       body: JSON.stringify({
         reps: parseInt(reps),
         weight: parseFloat(weight),
+        notes,
       }),
     })
       .then((res) => res.json())

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sets from "../../../../models/set";
-import { Pencil, Trash, X, Check } from "@phosphor-icons/react";
+import { Pencil, Trash, X, Check, NotePencil, CaretDown } from "@phosphor-icons/react";
+import React from "react";
 
 export default function AddSetModal({
   selectedExercise,
@@ -11,9 +12,19 @@ export default function AddSetModal({
   const [editingSetId, setEditingSetId] = useState(null);
   const [editSetReps, setEditSetReps] = useState("");
   const [editSetWeight, setEditSetWeight] = useState("");
+  const [editingNoteId, setEditingNoteId] = useState(null);
+  const [editNote, setEditNote] = useState("");
+  const [expandedNoteId, setExpandedNoteId] = useState(null);
 
   const [reps, setReps] = useState("");
   const [weight, setWeight] = useState("");
+
+  const truncateNote = (note) => {
+    if (!note) return "";
+    const lines = note.split('\n');
+    if (lines.length <= 3) return note;
+    return lines.slice(0, 3).join('\n') + '\n...';
+  };
 
   const deleteSet = async (exerciseId, setId) => {
     await Sets.delete(exerciseId, setId);
@@ -47,6 +58,56 @@ export default function AddSetModal({
     setEditingSetId(null);
     setEditSetReps("");
     setEditSetWeight("");
+  };
+
+  const startEditingNote = (set) => {
+    setEditingNoteId(set.id);
+    setEditNote(set.notes || "");
+    setExpandedNoteId(set.id);
+  };
+
+  const cancelEditingNote = () => {
+    setEditingNoteId(null);
+    setEditNote("");
+  };
+
+  const updateNote = async (exerciseId, setId, note) => {
+    try {
+      // Find the set to get current reps and weight
+      const set = selectedExercise.sets.find((s) => s.id === setId);
+      if (!set) throw new Error('Set not found');
+      await Sets.update(exerciseId, setId, {
+        reps: set.reps,
+        weight: set.weight,
+        notes: note,
+      });
+
+      // Update the selected exercise's sets in state
+      setSelectedExercise((prev) => ({
+        ...prev,
+        sets: prev.sets.map((set) =>
+          set.id === setId ? { ...set, notes: note } : set,
+        ),
+      }));
+
+      // Update the exercises list
+      setExercises((prev) =>
+        prev.map((exercise) =>
+          exercise.id === exerciseId
+            ? {
+                ...exercise,
+                sets: exercise.sets.map((set) =>
+                  set.id === setId ? { ...set, notes: note } : set,
+                ),
+              }
+            : exercise,
+        ),
+      );
+
+      setEditingNoteId(null);
+    } catch (error) {
+      console.error("Error updating note:", error);
+    }
   };
 
   const updateSet = async (exerciseId, setId, reps, weight) => {
@@ -213,81 +274,59 @@ export default function AddSetModal({
             {selectedExercise.sets
               ?.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
               .map((set, index) => (
-                <tr key={set.id}>
-                  <td className="px-4 py-[13px]">{index + 1}</td>
-                  <td className="px-4 py-2">
-                    {editingSetId === set.id ? (
-                      <input
-                        type="number"
-                        value={editSetReps}
-                        onChange={(e) => setEditSetReps(e.target.value)}
-                        className="border rounded px-2 py-1 w-20"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            updateSet(
-                              selectedExercise.id,
-                              set.id,
-                              editSetReps,
-                              editSetWeight,
-                            );
-                          } else if (e.key === "Escape") {
-                            cancelEditingSet();
-                          }
-                        }}
-                        autoFocus
-                      />
-                    ) : (
-                      set.reps
-                    )}
-                  </td>
-                  <td className="px-4 py-2">
-                    {editingSetId === set.id ? (
-                      <input
-                        type="number"
-                        value={editSetWeight}
-                        onChange={(e) => setEditSetWeight(e.target.value)}
-                        className="border rounded px-2 py-1 w-20"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            updateSet(
-                              selectedExercise.id,
-                              set.id,
-                              editSetReps,
-                              editSetWeight,
-                            );
-                          } else if (e.key === "Escape") {
-                            cancelEditingSet();
-                          }
-                        }}
-                      />
-                    ) : (
-                      set.weight
-                    )}
-                  </td>
-                  <td className="px-4 py-2">
-                    {editingSetId === set.id ? (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() =>
-                            updateSet(
-                              selectedExercise.id,
-                              set.id,
-                              editSetReps,
-                              editSetWeight,
-                            )
-                          }
-                          className="text-green-400 hover:text-green-600 transition-colors"
-                        >
-                          <Check size={16} weight="regular" />
-                        </button>
-                        <button
-                          onClick={cancelEditingSet}
-                          className="text-red-400 hover:text-red-600 transition-colors"
-                        >
-                          <X size={16} weight="regular" />
-                        </button>
-                      </div>
-                    ) : (
+                <React.Fragment key={set.id}>
+                  <tr>
+                    <td className="px-4 py-[13px]">{index + 1}</td>
+                    <td className="px-4 py-2">
+                      {editingSetId === set.id ? (
+                        <input
+                          type="number"
+                          value={editSetReps}
+                          onChange={(e) => setEditSetReps(e.target.value)}
+                          className="border rounded px-2 py-1 w-20"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              updateSet(
+                                selectedExercise.id,
+                                set.id,
+                                editSetReps,
+                                editSetWeight,
+                              );
+                            } else if (e.key === "Escape") {
+                              cancelEditingSet();
+                            }
+                          }}
+                          autoFocus
+                        />
+                      ) : (
+                        set.reps
+                      )}
+                    </td>
+                    <td className="px-4 py-2">
+                      {editingSetId === set.id ? (
+                        <input
+                          type="number"
+                          value={editSetWeight}
+                          onChange={(e) => setEditSetWeight(e.target.value)}
+                          className="border rounded px-2 py-1 w-20"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              updateSet(
+                                selectedExercise.id,
+                                set.id,
+                                editSetReps,
+                                editSetWeight,
+                              );
+                            } else if (e.key === "Escape") {
+                              cancelEditingSet();
+                            }
+                          }}
+                        />
+                      ) : (
+                        set.weight
+                      )}
+                    </td>
+                    <td className="px-4 py-2">
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => startEditingSet(set)}
@@ -296,15 +335,92 @@ export default function AddSetModal({
                           <Pencil size={16} weight="regular" />
                         </button>
                         <button
+                          onClick={() => {
+                            if (set.notes) {
+                              setExpandedNoteId(expandedNoteId === set.id ? null : set.id);
+                            } else {
+                              startEditingNote(set);
+                            }
+                          }}
+                          className={`${
+                            set.notes
+                              ? "text-purple-400 hover:text-purple-600"
+                              : "text-gray-400 hover:text-gray-600"
+                          } transition-colors`}
+                        >
+                          <NotePencil size={16} weight="regular" />
+                        </button>
+                        <button
                           onClick={() => deleteSet(selectedExercise.id, set.id)}
                           className="text-red-400 hover:text-red-600 transition-colors"
                         >
                           <Trash size={16} weight="regular" />
                         </button>
                       </div>
-                    )}
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
+                  {(expandedNoteId === set.id || editingNoteId === set.id || (set.notes && set.notes !== '')) && (
+                    (editingNoteId === set.id || (set.notes && set.notes !== '')) ? (
+                      <tr>
+                        {editingNoteId === set.id ? (
+                          <>
+                            <td colSpan={3} className="px-4 py-2 bg-gray-50">
+                              <textarea
+                                value={editNote}
+                                onChange={(e) => setEditNote(e.target.value)}
+                                className="w-full border rounded px-2 py-1 min-h-[80px] resize-y"
+                                placeholder="Add a note..."
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" && e.metaKey) {
+                                    updateNote(selectedExercise.id, set.id, editNote);
+                                  } else if (e.key === "Escape") {
+                                    cancelEditingNote();
+                                  }
+                                }}
+                                autoFocus
+                              />
+                            </td>
+                            <td className="px-4 py-2 bg-gray-50 align-top">
+                              <div className="flex flex-col gap-2">
+                                <button
+                                  onClick={() =>
+                                    updateNote(selectedExercise.id, set.id, editNote)
+                                  }
+                                  className="text-green-400 hover:text-green-600 transition-colors"
+                                >
+                                  <Check size={16} weight="regular" />
+                                </button>
+                                <button
+                                  onClick={cancelEditingNote}
+                                  className="text-red-400 hover:text-red-600 transition-colors"
+                                >
+                                  <X size={16} weight="regular" />
+                                </button>
+                              </div>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td colSpan={3} className="px-4 py-2 bg-gray-50">
+                              <div className="text-sm text-gray-700 whitespace-pre-wrap break-all overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
+                                {set.notes}
+                              </div>
+                            </td>
+                            <td className="px-4 py-2 bg-gray-50 align-top">
+                              <button
+                                onClick={() => startEditingNote(set)}
+                                className="text-blue-400 hover:text-blue-600 transition-colors mt-1"
+                                title="Edit note"
+                              >
+                                <Pencil size={16} weight="regular" />
+                              </button>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ) : null
+                  )}
+                </React.Fragment>
               ))}
           </tbody>
         </table>
