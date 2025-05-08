@@ -1,8 +1,8 @@
 import Workouts from "../../../../models/workout";
 import Exercises from "../../../../models/exercise";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import { Trash } from "@phosphor-icons/react";
+import { Trash, Pencil, Check, X } from "@phosphor-icons/react";
 
 export default function SelectWorkoutModal({
   workouts,
@@ -14,6 +14,9 @@ export default function SelectWorkoutModal({
   const { userId } = useAuth();
   const [newWorkoutName, setNewWorkoutName] = useState("");
   const [error, setError] = useState(null);
+  const [editingWorkoutId, setEditingWorkoutId] = useState(null);
+  const [editWorkoutName, setEditWorkoutName] = useState("");
+  const cancelEditRef = useRef(false);
 
   const createWorkout = async () => {
     if (!newWorkoutName.trim()) return;
@@ -41,6 +44,34 @@ export default function SelectWorkoutModal({
     } catch (error) {
       console.error("Error deleting workout:", error);
       setError(error.message || "Failed to delete workout");
+    }
+  };
+
+  const startEditingWorkout = (workout) => {
+    setEditingWorkoutId(workout.id);
+    setEditWorkoutName(workout.name);
+    cancelEditRef.current = false;
+  };
+
+  const cancelEditingWorkout = () => {
+    setEditingWorkoutId(null);
+    setEditWorkoutName("");
+  };
+
+  const updateWorkout = async (workout) => {
+    if (!editWorkoutName.trim()) return;
+    try {
+      await Workouts.update(userId, workout.id, editWorkoutName);
+      const updatedWorkouts = workouts.map((w) =>
+        w.id === workout.id ? { ...w, name: editWorkoutName } : w
+      );
+      setWorkouts(updatedWorkouts);
+      setEditingWorkoutId(null);
+      setEditWorkoutName("");
+      cancelEditRef.current = false;
+    } catch (error) {
+      console.error("Error updating workout:", error);
+      setError(error.message || "Failed to update workout");
     }
   };
 
@@ -120,18 +151,62 @@ export default function SelectWorkoutModal({
               >
                 <Trash size={20} weight="regular" />
               </button>
-              <div
-                onClick={() => selectWorkout(workout)}
-                className="flex-1 flex justify-between items-center"
+              <button
+                onClick={() => startEditingWorkout(workout)}
+                className="text-blue-400 hover:text-blue-600 transition-colors"
+                disabled={editingWorkoutId === workout.id}
               >
-                <div>
-                  <div className="font-medium">{workout.name}</div>
-                  <div className="text-sm text-gray-500">
-                    Created {new Date(workout.createdAt).toLocaleDateString()}
-                  </div>
+                <Pencil size={20} weight="regular" />
+              </button>
+              {editingWorkoutId === workout.id ? (
+                <div className="flex-1 flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={editWorkoutName}
+                    onChange={(e) => setEditWorkoutName(e.target.value)}
+                    className="border rounded px-2 py-1 flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") updateWorkout(workout);
+                      else if (e.key === "Escape") cancelEditingWorkout();
+                    }}
+                    onBlur={() => {
+                      if (cancelEditRef.current) {
+                        cancelEditRef.current = false;
+                        return;
+                      }
+                      if (editWorkoutName.trim()) updateWorkout(workout);
+                      else cancelEditingWorkout();
+                    }}
+                    autoFocus
+                  />
+                  <button
+                    onClick={() => updateWorkout(workout)}
+                    className="text-green-400 hover:text-green-600 transition-colors"
+                  >
+                    <Check size={20} weight="regular" />
+                  </button>
+                  <button
+                    onMouseDown={() => { cancelEditRef.current = true; }}
+                    onClick={cancelEditingWorkout}
+                    className="text-red-400 hover:text-red-600 transition-colors"
+                  >
+                    <X size={20} weight="regular" />
+                  </button>
                 </div>
-                <div className="text-blue-500">Select →</div>
-              </div>
+              ) : (
+                <div
+                  onClick={() => selectWorkout(workout)}
+                  className="flex-1 flex justify-between items-center"
+                >
+                  <div>
+                    <div className="font-medium">{workout.name}</div>
+                    <div className="text-sm text-gray-500">
+                      Created {new Date(workout.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="text-blue-500">Select →</div>
+                </div>
+              )}
             </div>
           ))}
         </div>
