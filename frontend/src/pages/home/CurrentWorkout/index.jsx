@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Pencil, Trash, X, Check } from "@phosphor-icons/react";
 
 import { useAuth } from "@clerk/clerk-react";
@@ -16,6 +16,16 @@ export default function CurrentWorkout({ workouts, setWorkouts }) {
   const [editExerciseName, setEditExerciseName] = useState("");
   const [selectedExercise, setSelectedExercise] = useState(false);
   const [showAddSetModal, setShowAddSetModal] = useState(false);
+
+  // Ref for the scrollable table container
+  const tableContainerRef = useRef(null);
+
+  // Scroll to bottom when exercises change
+  useEffect(() => {
+    if (tableContainerRef.current) {
+      tableContainerRef.current.scrollTop = tableContainerRef.current.scrollHeight;
+    }
+  }, [exercises]);
 
   const deleteExercise = async (id) => {
     if (!selectedWorkout) return;
@@ -87,7 +97,7 @@ export default function CurrentWorkout({ workouts, setWorkouts }) {
   return (
     <div className="bg-gray-100 rounded-lg p-8 h-full w-full">
       <h1 className="text-3xl font-semibold mb-6">Current Workout</h1>
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="flex flex-col bg-white rounded-lg shadow-sm p-6 h-[90%]">
         <div className="flex justify-between items-center mb-4">
           <div>
             <h2 className="text-xl font-semibold">{selectedWorkout.name}</h2>
@@ -106,7 +116,7 @@ export default function CurrentWorkout({ workouts, setWorkouts }) {
           </button>
         </div>
 
-        <div className="overflow-x-auto max-h-[80%] overflow-y-auto">
+        <div ref={tableContainerRef} className="overflow-x-auto overflow-y-auto flex-1">
           <table className="min-w-full bg-white">
             <thead className="bg-gray-50">
               <tr>
@@ -207,17 +217,20 @@ export default function CurrentWorkout({ workouts, setWorkouts }) {
                     </td>
                   </tr>
                 ))}
+              <tr>
+                <td colSpan={3} className="py-4">
+                  <div className="flex justify-center items-center">
+                    <button
+                      onClick={() => createExercise("New Exercise")}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                    >
+                      Add Exercise
+                    </button>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
-        </div>
-
-        <div className="flex justify-center items-center mt-4">
-          <button
-            onClick={() => createExercise("New Exercise")}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Add Exercise
-          </button>
         </div>
       </div>
 
