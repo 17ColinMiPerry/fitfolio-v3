@@ -2,11 +2,12 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export class Set {
-  static async create(exerciseId, reps, weight) {
+  static async create(exerciseId, reps, weight, notes = null) {
     return await prisma.set.create({
       data: {
         reps: parseInt(reps),
         weight: parseFloat(weight),
+        notes,
         exerciseId,
       },
     });
@@ -18,13 +19,16 @@ export class Set {
     });
   }
 
-  static async update(id, reps, weight) {
+  static async update(id, reps, weight, notes = null) {
+    // Only update notes if provided (otherwise leave unchanged)
+    const data = {
+      reps: parseInt(reps),
+      weight: parseFloat(weight),
+    };
+    if (notes !== undefined) data.notes = notes;
     return await prisma.set.update({
       where: { id },
-      data: {
-        reps: parseInt(reps),
-        weight: parseFloat(weight),
-      },
+      data,
     });
   }
 }

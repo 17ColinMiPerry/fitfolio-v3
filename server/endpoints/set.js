@@ -4,9 +4,9 @@ export const setEndpoints = (app) => {
   // Add a set to an exercise
   app.post("/api/exercises/:id/sets", async (req, res) => {
     try {
-      const { reps, weight } = req.body;
+      const { reps, weight, notes } = req.body;
       const exerciseId = parseInt(req.params.id);
-      const set = await Set.create(exerciseId, reps, weight);
+      const set = await Set.create(exerciseId, reps, weight, notes);
       res.json(set);
     } catch (error) {
       console.error("Error adding set:", error);
@@ -30,8 +30,8 @@ export const setEndpoints = (app) => {
   app.put("/api/exercises/:exerciseId/sets/:setId", async (req, res) => {
     try {
       const setId = parseInt(req.params.setId);
-      const { reps, weight } = req.body;
-      const updatedSet = await Set.update(setId, reps, weight);
+      const { reps, weight, notes } = req.body;
+      const updatedSet = await Set.update(setId, reps, weight, notes);
       res.json(updatedSet);
     } catch (error) {
       console.error("Error updating set:", error);

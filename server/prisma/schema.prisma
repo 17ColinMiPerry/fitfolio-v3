@@ -38,6 +38,7 @@ model Set {
   id         Int      @id @default(autoincrement())
   reps       Int
   weight     Float // Using Float to allow for decimal weights
+  notes      String?  // Optional notes field
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
   exerciseId Int // Foreign key to Exercise
   createdAt  DateTime @default(now())
