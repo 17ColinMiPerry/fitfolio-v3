@@ -1,6 +1,7 @@
 import Header from "../../components/Header";
 import CurrentWorkout from "./CurrentWorkout";
 import WelcomeDashboard from "./WelcomeDashboard";
+import StatTracker from "./StatTracker";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import Workouts from "../../models/workout";
 import { useAuth } from "@clerk/clerk-react";
@@ -19,15 +20,18 @@ export default function Home() {
   }, [userId]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-300">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-300">
       <SignedIn>
         <Header />
-        <div className="flex flex-row items-center justify-center bg-gray-300 gap-12">
-          <div className="w-[625px] h-[725px] rounded-lg">
-            <WelcomeDashboard workouts={workouts} setWorkouts={setWorkouts} />
+        <div className="flex flex-wrap justify-center gap-10 p-4 bg-gray-300">
+          <div className="w-[600px] h-[725px] rounded-lg">
+            <WelcomeDashboard workouts={workouts} />
           </div>
-          <div className="w-[625px] h-[725px] rounded-lg">
+          <div className="w-[600px] h-[725px] rounded-lg">
             <CurrentWorkout workouts={workouts} setWorkouts={setWorkouts} />
+          </div>
+          <div className="w-[600px] h-[725px] rounded-lg">
+            <StatTracker workouts={workouts} />
           </div>
         </div>
       </SignedIn>
