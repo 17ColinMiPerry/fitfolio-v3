@@ -1,10 +1,10 @@
 # Fitfolio
 
-A workout tracking app that started as a fun project between friends. Think of it as a digital exercise journal where we can track our fitness journeys together, share progress, and keep each other motivated.
+A worout journaling app that allows for tracking workout frequency and lifts.
 
 ## About
 
-Fitfolio began as a simple idea: what if we had a cool way to track our workouts together? No more scattered notes or forgotten exercises. Just a clean, simple app where we can log our workouts, see our progress, and maybe even challenge each other to try new exercises. It's like having a workout buddy in your pocket, minus the awkward high-fives.
+My lifts have been scattered between my phone's notes app, Google Sheets, and physical journals. I wanted an app that had a clean and simple interface where I could journal my lifts so that I could ensure I was not regression and properly applying progressive overload. This app was my solution, with the added benefit of the potential for customizability and modularity. In the future I would like to add additional features such as workout sharing, templates, and analytics.
 
 ## Tech Stack
 
