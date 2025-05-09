@@ -1,31 +1,35 @@
 # Fitfolio
 
-A modern workout tracking application built with React and Express.js. Track your workouts, exercises, and sets with a clean, intuitive interface.
+A workout tracking app that started as a fun project between friends. Think of it as a digital exercise journal where we can track our fitness journeys together, share progress, and keep each other motivated.
+
+## About
+
+Fitfolio began as a simple idea: what if we had a cool way to track our workouts together? No more scattered notes or forgotten exercises. Just a clean, simple app where we can log our workouts, see our progress, and maybe even challenge each other to try new exercises. It's like having a workout buddy in your pocket, minus the awkward high-fives.
 
 ## Tech Stack
 
 ### Frontend
-- **React** - UI library for building the user interface
-- **Vite** - Next-generation frontend tooling for fast development
-- **Tailwind CSS** - Utility-first CSS framework for styling
-- **Clerk** - Authentication and user management
-- **Phosphor Icons** - Icon library for the UI
+- **React** - For building a snappy, interactive UI
+- **Vite** - Makes development super fast and smooth
+- **Tailwind CSS** - For styling without the headache
+- **Clerk** - Handles all the login stuff so we don't have to
+- **Phosphor Icons** - Some nice-looking icons to make things pretty
 
 ### Backend
-- **Express.js** - Web framework for Node.js
-- **Prisma** - Next-generation ORM for database access
-- **PostgreSQL** - Relational database (via Prisma Data Platform)
-- **Vercel** - Deployment platform for both frontend and backend
+- **Express.js** - A simple but powerful server framework
+- **Prisma** - Makes talking to the database way easier
+- **SQLite** - A lightweight database that's perfect for our needs
+- **Node.js** - The engine that makes everything run
 
 ## Features
 
-- 🔐 Secure authentication with Clerk
-- 💪 Create and manage workouts
-- 🏋️‍♂️ Add exercises to workouts
-- 📊 Track sets, reps, and weights
-- 📱 Responsive design for all devices
-- 🔄 Real-time updates
-- 🎨 Modern, clean UI
+- 🔐 Easy sign-in with Clerk
+- 💪 Create and manage your workout routines
+- 🏋️‍♂️ Add exercises to your workouts
+- 📊 Track your sets, reps, and weights
+- 📱 Works great on phones and computers
+- 🔄 See your progress over time
+- 🎨 Clean, modern look that's easy on the eyes
 
 ## Getting Started
 
@@ -33,7 +37,6 @@ A modern workout tracking application built with React and Express.js. Track you
 
 - Node.js (v16 or higher)
 - npm or yarn
-- PostgreSQL database (or use Prisma Data Platform)
 
 ### Installation
 
@@ -64,7 +67,7 @@ VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
 
 Backend (.env):
 ```env
-DATABASE_URL=your_database_url
+DATABASE_URL="file:./dev.db"
 ```
 
 4. Start the development servers:
@@ -80,38 +83,6 @@ npm run dev
 The application should now be running at:
 - Frontend: http://localhost:5173
 - Backend: http://localhost:5000
-
-## Deployment
-
-### Backend Deployment
-
-1. Install Vercel CLI:
-```bash
-npm i -g vercel
-```
-
-2. Deploy the backend:
-```bash
-cd server
-vercel
-```
-
-3. Set environment variables in Vercel dashboard:
-- `DATABASE_URL`
-
-### Frontend Deployment
-
-1. Update the API URL in `frontend/src/utils/constants.js` to point to your deployed backend
-
-2. Deploy the frontend:
-```bash
-cd frontend
-vercel
-```
-
-3. Set environment variables in Vercel dashboard:
-- `VITE_API_URL`
-- `VITE_CLERK_PUBLISHABLE_KEY`
 
 ## Project Structure
 
@@ -132,6 +103,8 @@ fitfolio-v3/
 ```
 
 ## Contributing
+
+Feel free to fork this project and make it your own! Whether you're adding new features, fixing bugs, or just playing around with the code, all contributions are welcome.
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
