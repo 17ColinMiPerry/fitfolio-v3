@@ -9,17 +9,16 @@ Fitfolio began as a simple idea: what if we had a cool way to track our workouts
 ## Tech Stack
 
 ### Frontend
-- **React** - For building a snappy, interactive UI
-- **Vite** - Makes development super fast and smooth
-- **Tailwind CSS** - For styling without the headache
-- **Clerk** - Handles all the login stuff so we don't have to
-- **Phosphor Icons** - Some nice-looking icons to make things pretty
+- React
+- Vite
+- Tailwind CSS
+- Clerk
 
 ### Backend
-- **Express.js** - A simple but powerful server framework
-- **Prisma** - Makes talking to the database way easier
-- **SQLite** - A lightweight database that's perfect for our needs
-- **Node.js** - The engine that makes everything run
+- Express.js
+- Prisma
+- SQLite
+- Node.js
 
 ## Features
 
@@ -27,7 +26,6 @@ Fitfolio began as a simple idea: what if we had a cool way to track our workouts
 - 💪 Create and manage your workout routines
 - 🏋️‍♂️ Add exercises to your workouts
 - 📊 Track your sets, reps, and weights
-- 📱 Works great on phones and computers
 - 🔄 See your progress over time
 - 🎨 Clean, modern look that's easy on the eyes
 
@@ -65,19 +63,14 @@ VITE_API_URL=http://localhost:5000/api
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
 ```
 
-Backend (.env):
-```env
-DATABASE_URL="file:./dev.db"
-```
-
-4. Start the development servers:
+4. Start the development servers in separate terminals:
 
 ```bash
-# Start backend server (from server directory)
-npm run dev
+# Start backend server
+npm run dev:server
 
-# Start frontend server (from frontend directory)
-npm run dev
+# Start frontend server
+npm run dev:frontend
 ```
 
 The application should now be running at:
