@@ -9,12 +9,14 @@ My lifts have been scattered between my phone's notes app, Google Sheets, and ph
 ## Tech Stack
 
 ### Frontend
+
 - React
 - Vite
 - Tailwind CSS
 - Clerk
 
 ### Backend
+
 - Express.js
 - Prisma
 - SQLite
@@ -22,12 +24,12 @@ My lifts have been scattered between my phone's notes app, Google Sheets, and ph
 
 ## Features
 
-- 🔐 Easy sign-in with Clerk
-- 💪 Create and manage your workout routines
-- 🏋️‍♂️ Add exercises to your workouts
-- 📊 Track your sets, reps, and weights
-- 🔄 See your progress over time
-- 🎨 Clean, modern look that's easy on the eyes
+- Easy sign-in with Clerk
+- Create and manage your workout routines
+- Add exercises to your workouts
+- Track your sets, reps, and weights
+- See your progress over time
+- Clean, modern look that's easy on the eyes
 
 ## Getting Started
 
@@ -39,12 +41,14 @@ My lifts have been scattered between my phone's notes app, Google Sheets, and ph
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/fitfolio-v3.git
 cd fitfolio-v3
 ```
 
 2. Install dependencies for both frontend and backend:
+
 ```bash
 # Install frontend dependencies
 cd frontend
@@ -58,6 +62,7 @@ npm install
 3. Set up environment variables:
 
 Frontend (.env):
+
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
@@ -74,8 +79,9 @@ npm run dev:frontend
 ```
 
 The application should now be running at:
-- Frontend: http://localhost:5173
-- Backend: http://localhost:5000
+
+- Frontend: <http://localhost:5173>
+- Backend: <http://localhost:5000>
 
 ## Project Structure
 
